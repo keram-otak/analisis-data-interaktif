@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisis Data Interaktif - Informatika Kelas X</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Gaya tambahan khusus */
+        .card-materi {
+            transition: transform 0.3s ease-in-out;
+        }
+        .card-materi:hover {
+            transform: translateY(-5px);
+        }
+        /* Gaya untuk Drag-and-Drop */
+        .drag-source, .drop-target {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+        .drag-source {
+            background-color: #fca5a5; /* Red-300 */
+            border: 2px dashed #dc2626; /* Red-600 */
+        }
+        .drop-target {
+            background-color: #d1fae5; /* Green-100 */
+            border: 2px solid #10b981; /* Green-500 */
+            min-height: 50px;
+            line-height: 30px;
+        }
+        .correct-drop {
+            background-color: #a7f3d0; /* Green-200 */
+        }
+        .incorrect-drop {
+            background-color: #fee2e2; /* Red-100 */
+        }
+        /* Responsifitas untuk tampilan HP/Mobile */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+
+    <nav class="bg-indigo-600 p-4 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold text-white">📊 Analisis Data Interaktif</h1>
+            <div class="space-x-4">
+                <a href="#materi" class="text-white hover:text-indigo-200 hidden sm:inline">Materi</a>
+                <a href="#latihan" class="text-white hover:text-indigo-200 hidden sm:inline">Latihan</a>
+                <a href="#simulasi" class="text-white hover:text-indigo-200 hidden sm:inline">Simulasi</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <section id="pembuka" class="min-h-screen flex flex-col justify-center items-center text-center bg-white shadow-xl rounded-xl p-6 mb-12">
+            <h2 class="text-5xl font-extrabold text-indigo-700 mb-4 animate-pulse">Jelajahi Dunia Analisis Data!</h2>
+            <p class="text-xl text-gray-600 mb-6">Materi Informatika SMA Kelas X</p>
+            <p class="text-lg text-gray-500 mb-8">Disusun oleh: <span class="font-semibold text-indigo-500">Bpk./Ibu [Nama Guru Anda]</span></p>
+            <button id="mulai-belajar" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105">
+                🚀 Mulai Belajar Sekarang!
+            </button>
+        </section>
+        
+        <main id="konten-utama" class="hidden space-y-12">
+
+            <section id="materi" class="bg-white shadow-xl rounded-xl p-6 md:p-10">
+                <h3 class="text-3xl font-bold text-indigo-600 mb-6 border-b-2 pb-2">💡 Konsep Dasar Analisis Data</h3>
+                <p class="text-gray-700 mb-8">Analisis data adalah proses mengolah data mentah menjadi informasi yang bermanfaat. Ada 4 tahapan utama yang perlu kamu ketahui:</p>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div id="card-kumpul" class="card-materi bg-red-100 p-5 rounded-lg shadow-md border-t-4 border-red-500 hover:shadow-xl cursor-pointer" onclick="showExplanation('kumpul')">
+                        <span class="text-3xl block mb-2">📥</span>
+                        <h4 class="font-bold text-xl text-red-700">1. Pengumpulan Data</h4>
+                        <p class="text-sm text-red-600 mt-2 hidden" id="exp-kumpul">Mengambil data dari berbagai sumber, seperti survei, sensor, atau database.</p>
+                    </div>
+                    <div id="card-olah" class="card-materi bg-yellow-100 p-5 rounded-lg shadow-md border-t-4 border-yellow-500 hover:shadow-xl cursor-pointer" onclick="showExplanation('olah')">
+                        <span class="text-3xl block mb-2">🧹</span>
+                        <h4 class="font-bold text-xl text-yellow-700">2. Pengolahan Data</h4>
+                        <p class="text-sm text-yellow-600 mt-2 hidden" id="exp-olah">Membersihkan, memvalidasi, dan mengubah format data agar siap dianalisis.</p>
+                    </div>
+                    <div id="card-visual" class="card-materi bg-blue-100 p-5 rounded-lg shadow-md border-t-4 border-blue-500 hover:shadow-xl cursor-pointer" onclick="showExplanation('visual')">
+                        <span class="text-3xl block mb-2">📈</span>
+                        <h4 class="font-bold text-xl text-blue-700">3. Visualisasi Data</h4>
+                        <p class="text-sm text-blue-600 mt-2 hidden" id="exp-visual">Menyajikan data dalam bentuk grafik, diagram, atau peta agar mudah dipahami.</p>
+                    </div>
+                    <div id="card-interp" class="card-materi bg-green-100 p-5 rounded-lg shadow-md border-t-4 border-green-500 hover:shadow-xl cursor-pointer" onclick="showExplanation('interp')">
+                        <span class="text-3xl block mb-2">🧠</span>
+                        <h4 class="font-bold text-xl text-green-700">4. Interpretasi Data</h4>
+                        <p class="text-sm text-green-600 mt-2 hidden" id="exp-interp">Menarik kesimpulan dan membuat rekomendasi berdasarkan hasil analisis.</p>
+                    </div>
+                </div>
+
+                <div class="mt-8 p-4 bg-indigo-50 border-l-4 border-indigo-400 rounded-md">
+                    <p class="font-semibold text-indigo-700">Ayo Coba!</p>
+                    <p class="text-sm text-indigo-600">Klik pada salah satu tahapan di atas untuk melihat penjelasan singkatnya.</p>
+                </div>
+
+            </section>
+            
+            <section id="latihan" class="bg-white shadow-xl rounded-xl p-6 md:p-10">
+                <h3 class="text-3xl font-bold text-indigo-600 mb-6 border-b-2 pb-2">🎯 Uji Pemahamanmu</h3>
+                
+                <div id="kuis-pg" class="mb-8 p-4 border rounded-lg">
+                    <h4 class="text-2xl font-semibold text-gray-700 mb-4">Pilihan Ganda</h4>
+                    <div class="mb-4 p-3 bg-gray-50 rounded-md shadow-sm">
+                        <p class="font-medium text-gray-800 mb-2">1. Tahap analisis data yang bertujuan untuk menyajikan data dalam bentuk visual agar mudah dipahami adalah...</p>
+                        <div class="space-y-2">
+                            <label class="block cursor-pointer hover:bg-indigo-100 p-2 rounded"><input type="radio" name="soal1" value="A" data-jawaban="Visualisasi Data" class="mr-2"> Pengumpulan Data</label>
+                            <label class="block cursor-pointer hover:bg-indigo-100 p-2 rounded"><input type="radio" name="soal1" value="B" data-jawaban="Visualisasi Data" class="mr-2"> Pengolahan Data</label>
+                            <label class="block cursor-pointer hover:bg-indigo-100 p-2 rounded"><input type="radio" name="soal1" value="C" data-jawaban="Visualisasi Data" class="mr-2"> Visualisasi Data</label>
+                            <label class="block cursor-pointer hover:bg-indigo-100 p-2 rounded"><input type="radio" name="soal1" value="D" data-jawaban="Visualisasi Data" class="mr-2"> Interpretasi Data</label>
+                        </div>
+                        <p class="text-sm mt-2 text-red-500 hidden" id="feedback1"></p>
+                    </div>
+                    <div class="mb-4 p-3 bg-gray-50 rounded-md shadow-sm">
+                        <p class="font-medium text-gray-800 mb-2">2. Apa nama tahap analisis data di mana data 'dibersihkan' dari kesalahan atau nilai yang hilang?</p>
+                        <div class="space-y-2">
+                            <label class="block cursor-pointer hover:bg-indigo-100 p-2 rounded"><input type="radio" name="soal2" value="A" data-jawaban="Pengolahan Data" class="mr-2"> Pengumpulan Data</label>
+                            <label class="block cursor-pointer hover:bg-indigo-100 p-2 rounded"><input type="radio" name="soal2" value="B" data-jawaban="Pengolahan Data" class="mr-2"> Pengolahan Data</label>
+                            <label class="block cursor-pointer hover:bg-indigo-100 p-2 rounded"><input type="radio" name="soal2" value="C" data-jawaban="Pengolahan Data" class="mr-2"> Visualisasi Data</label>
+                            <label class="block cursor-pointer hover:bg-indigo-100 p-2 rounded"><input type="radio" name="soal2" value="D" data-jawaban="Pengolahan Data" class="mr-2"> Interpretasi Data</label>
+                        </div>
+                        <p class="text-sm mt-2 text-red-500 hidden" id="feedback2"></p>
+                    </div>
+                    <button onclick="checkPG()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300">Cek Jawaban PG</button>
+                    <p id="skor-pg" class="mt-4 text-lg font-semibold"></p>
+                </div>
+                
+                <hr class="my-8">
+
+                <div id="drag-drop-activity">
+                    <h4 class="text-2xl font-semibold text-gray-700 mb-4">Drag-and-Drop (Urutan Tahap)</h4>
+                    <p class="mb-4 text-gray-600">Seret kartu tahap analisis data ke kotak yang sesuai dengan urutannya (1 sampai 4).</p>
+
+                    <div id="drag-container" class="flex flex-wrap justify-center gap-4 mb-8 bg-gray-100 p-4 rounded-lg">
+                        <div id="drag-1" class="drag-source" draggable="true" data-order="1">Pengumpulan Data</div>
+                        <div id="drag-2" class="drag-source" draggable="true" data-order="2">Pengolahan Data</div>
+                        <div id="drag-3" class="drag-source" draggable="true" data-order="3">Visualisasi Data</div>
+                        <div id="drag-4" class="drag-source" draggable="true" data-order="4">Interpretasi Data</div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="p-3 bg-blue-50 rounded-lg border-2 border-blue-200">
+                            <p class="font-bold text-blue-700 mb-2">Tahap 1</p>
+                            <div id="drop-1" class="drop-target" data-expected="1"></div>
+                        </div>
+                        <div class="p-3 bg-blue-50 rounded-lg border-2 border-blue-200">
+                            <p class="font-bold text-blue-700 mb-2">Tahap 2</p>
+                            <div id="drop-2" class="drop-target" data-expected="2"></div>
+                        </div>
+                        <div class="p-3 bg-blue-50 rounded-lg border-2 border-blue-200">
+                            <p class="font-bold text-blue-700 mb-2">Tahap 3</p>
+                            <div id="drop-3" class="drop-target" data-expected="3"></div>
+                        </div>
+                        <div class="p-3 bg-blue-50 rounded-lg border-2 border-blue-200">
+                            <p class="font-bold text-blue-700 mb-2">Tahap 4</p>
+                            <div id="drop-4" class="drop-target" data-expected="4"></div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="checkDragDrop()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mt-6 transition duration-300">Cek Urutan</button>
+                    <p id="skor-drag-drop" class="mt-4 text-lg font-semibold"></p>
+                </div>
+            </section>
+
+            <section id="simulasi" class="bg-white shadow-xl rounded-xl p-6 md:p-10">
+                <h3 class="text-3xl font-bold text-indigo-600 mb-6 border-b-2 pb-2">🔬 Simulasi Mini: Analisis Survei Siswa</h3>
+                <p class="text-gray-700 mb-4">Coba ubah data jumlah siswa yang memilih kegiatan ekstrakurikuler di bawah ini, lalu lihat bagaimana grafik berubah!</p>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="p-4 border rounded-lg bg-gray-50">
+                        <h4 class="text-xl font-semibold mb-3">Input Data Jumlah Siswa (Orang)</h4>
+                        
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-2">
+                                <label for="input-futsal" class="w-24">Futsal:</label>
+                                <input type="number" id="input-futsal" value="50" min="0" class="flex-grow p-2 border rounded-md focus:border-indigo-500">
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <label for="input-pramuka" class="w-24">Pramuka:</label>
+                                <input type="number" id="input-pramuka" value="35" min="0" class="flex-grow p-2 border rounded-md focus:border-indigo-500">
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <label for="input-robotik" class="w-24">Robotik:</label>
+                                <input type="number" id="input-robotik" value="15" min="0" class="flex-grow p-2 border rounded-md focus:border-indigo-500">
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <label for="input-seni" class="w-24">Seni:</label>
+                                <input type="number" id="input-seni" value="20" min="0" class="flex-grow p-2 border rounded-md focus:border-indigo-500">
+                            </div>
+                        </div>
+                        
+                        <button onclick="updateChart()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mt-4 transition duration-300 w-full">Analisis & Visualisasi Data!</button>
+                        
+                        <div class="mt-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 rounded-md">
+                            <p class="font-semibold text-yellow-700">Interpretasi Otomatis:</p>
+                            <p class="text-sm text-yellow-600" id="interpretasi-hasil">Klik tombol 'Analisis & Visualisasi Data!' untuk melihat interpretasi hasil survei.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border rounded-lg bg-white shadow-md">
+                        <h4 class="text-xl font-semibold mb-3">Visualisasi Data (Grafik Batang)</h4>
+                        <canvas id="ekskulChart" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="evaluasi" class="bg-indigo-100 shadow-xl rounded-xl p-6 md:p-10 text-center">
+                <h3 class="text-3xl font-bold text-indigo-700 mb-4">🏆 Evaluasi Akhir</h3>
+                <p class="text-xl text-gray-700 mb-6">Hitung total skormu dari seluruh latihan yang telah kamu kerjakan!</p>
+                <button onclick="hitungTotalSkor()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105">
+                    Hitung Skor Total
+                </button>
+                <div class="mt-6 p-4 bg-white rounded-lg shadow-md max-w-lg mx-auto">
+                    <p class="text-2xl font-bold text-gray-800">Skor Pilihan Ganda: <span id="final-skor-pg" class="text-indigo-600">0</span> / 100</p>
+                    <p class="text-2xl font-bold text-gray-800">Skor Drag-and-Drop: <span id="final-skor-dd" class="text-indigo-600">0</span> / 100</p>
+                    <hr class="my-3">
+                    <p class="text-3xl font-extrabold text-green-600">Total Nilai Akhir: <span id="total-nilai">0</span></p>
+                    <p class="mt-2 text-md text-gray-500" id="final-keterangan"></p>
+                </div>
+            </section>
+
+        </main>
+
+        <section id="panduan-guru" class="mt-12 p-6 bg-yellow-50 border-t-4 border-yellow-500 rounded-xl shadow-lg">
+            <h3 class="text-2xl font-bold text-yellow-800 mb-4">📘 Panduan Singkat untuk Guru</h3>
+            <ol class="list-decimal list-inside text-gray-700 space-y-3">
+                <li>**Hosting Cepat:** Unggah file `index.html` dan `script.js` ke layanan gratis seperti **GitHub Pages** (lihat instruksi di bawah) atau Netlify. Media ini akan langsung berfungsi tanpa konfigurasi server.</li>
+                <li>**Interaksi Materi:** Siswa dapat mengklik kartu 4 tahapan analisis data untuk menampilkan penjelasan singkat (Visualisasi Sederhana).</li>
+                <li>**Latihan Mandiri:** Siswa dapat mencoba kuis PG dan *Drag-and-Drop*. Mereka bisa mengecek jawaban dan skor akan muncul secara otomatis.</li>
+                <li>**Simulasi Data:** Dorong siswa untuk mencoba mengubah-ubah angka pada simulasi. Ini melatih pemahaman mereka tentang **Pengolahan** (input data) dan **Visualisasi/Interpretasi** (hasil grafik dan teks).</li>
+                <li>**Evaluasi:** Tombol "Hitung Skor Total" akan mengumpulkan nilai dari kuis PG dan *Drag-and-Drop* untuk hasil akhir yang objektif.</li>
+                <li>**Responsif:** Media ini dirancang menggunakan Tailwind CSS sehingga akan menyesuaikan tampilannya dengan baik di HP maupun Laptop.</li>
+            </ol>
+        </section>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
